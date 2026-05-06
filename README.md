@@ -119,3 +119,62 @@ PathResult path = svc.findStrongestPath("Taylor Swift", "Billie Eilish", 3);
 Map<String, List<String>> tracks = svc.getTopTracksForPath(path);
 // tracks.get("Lorde") → ["Royals", "Tennis Court", "Team"]
 ```
+
+---
+
+## Running the Web UI (Person 3)
+
+After compiling (see above), start the server with:
+
+```bash
+java -cp out:lib/json.jar app.Main --server
+```
+
+Then open **http://localhost:8080** in your browser.
+
+### Compile command (includes server files)
+
+```bash
+javac -cp lib/json.jar -d out \
+  src/app/model/PathResult.java \
+  src/app/graph/ArtistNode.java \
+  src/app/graph/ArtistEdge.java \
+  src/app/graph/ArtistGraph.java \
+  src/app/api/LastFmClient.java \
+  src/app/algorithm/StrongestPathFinder.java \
+  src/app/service/ArtistConnectionService.java \
+  src/app/server/PathHandler.java \
+  src/app/server/ApiServer.java \
+  src/app/Main.java
+```
+
+Copy the frontend to the output directory so it can be served:
+
+```bash
+cp src/resources/index.html out/
+```
+
+### New files added (Person 3)
+
+```
+src/app/server/
+    ApiServer.java     — HTTP server on port 8080, serves / and /api/path
+    PathHandler.java   — parses query params, calls ArtistConnectionService, returns JSON
+src/resources/
+    index.html         — full frontend: search inputs, degree slider, path visualization
+```
+
+> **AI disclosure:** `src/resources/index.html` was generated with the assistance of AI (Claude) to handle the styling, layout, and interactive frontend logic. 
+
+### API endpoint
+
+```
+GET /api/path?start=Taylor+Swift&target=Billie+Eilish&depth=3&mode=strongest
+```
+
+| Param  | Required | Default     | Notes                        |
+|--------|----------|-------------|------------------------------|
+| start  | yes      |             | Artist name (Last.fm exact)  |
+| target | yes      |             | Artist name (Last.fm exact)  |
+| depth  | no       | 3           | 1–6 hops                     |
+| mode   | no       | strongest   | "strongest" or "shortest"    |
