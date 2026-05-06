@@ -30,9 +30,9 @@ public class ArtistConnectionService {
 
     /**
      * Hard cap on Last.fm API calls per search to prevent exponential explosion.
-     * At 10 similar artists per call, 60 calls can reach ~2 hops from most artists.
+     * At 10 similar artists per call, 200 calls can reach ~3 hops from most artists.
      */
-    private static final int MAX_API_CALLS_PER_SEARCH = 60;
+    private static final int MAX_API_CALLS_PER_SEARCH = 200;
 
     private final LastFmClient apiClient;
     private final ArtistGraph graph;

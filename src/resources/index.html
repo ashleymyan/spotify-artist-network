@@ -175,7 +175,7 @@
     </div>
     <div class="loading" id="loading">
         <div class="spinner"></div>
-        <p class="loading-text">building artist graph...</p>
+        <p class="loading-text">building artist graph — first search may take a moment...</p>
     </div>
     <div class="error-msg" id="errorMsg"></div>
     <div class="results" id="results">
@@ -236,9 +236,16 @@
     if (!start || !target) { showError('Please enter both a start and target artist.'); return; }
     setLoading(true);
     hideAll();
+
     const url = `/api/path?start=${encodeURIComponent(start)}&target=${encodeURIComponent(target)}&depth=${depth}&mode=${selectedMode}`;
+
+    // 60 second timeout — first search builds the graph which takes longer
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000);
+
     try {
-      const res  = await fetch(url);
+      const res  = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
       const data = await res.json();
       if (!res.ok) { showError(data.error || 'Something went wrong.'); return; }
       if (!data.found) {
@@ -247,7 +254,12 @@
       }
       renderResults(data);
     } catch (err) {
-      showError('Could not reach the server. Make sure the Java server is running.');
+      clearTimeout(timeout);
+      if (err.name === 'AbortError') {
+        showError('Request timed out. The server may still be building the graph — please try again.');
+      } else {
+        showError('Could not reach the server. Make sure the Java server is running.');
+      }
     } finally {
       setLoading(false);
     }
