@@ -13,11 +13,24 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+        if (args.length > 0 && args[0].equals("--server")) {
+            String apiKey = System.getenv("LASTFM_API_KEY");
+            if (apiKey == null || apiKey.isBlank()) {
+                System.err.println("Error: set LASTFM_API_KEY before starting the server.");
+                System.exit(1);
+            }
+            app.server.ApiServer server = new app.server.ApiServer(8080, apiKey);
+            server.start();
+            Thread.currentThread().join();
+            return;
+        }
+
         // ------------------------------------------------------------------ //
         //  SECTION 1: Mock-graph test (no API key required)                   //
         //  Verifies that the graph data structure and path-finding algorithms  //
         //  work correctly on a small, hand-built graph.                       //
         // ------------------------------------------------------------------ //
+
 
         System.out.println("==============================================");
         System.out.println("  SECTION 1: Mock Graph (no API key needed)  ");
