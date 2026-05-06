@@ -1,10 +1,31 @@
-# Spotify Artist Network
+# Artist Network
 
-Find the connection path between any two artists using the Last.fm similarity graph.
+**Team:** Ashley Yan (asyan@seas.upenn.edu), Emily Yu (yuemily@seas.upenn.edu), Isabelle Gu (igu@wharton.upenn.edu)
 
-Given a start and target artist, the app builds a weighted graph (edges = Last.fm match scores)
-and finds either the **shortest path** (fewest hops) or the **strongest path** (highest minimum
-edge score), then displays top track recommendations at each stop.
+## Project Description
+
+Artist Network is a web application that finds the connection path between any two musical artists using the Last.fm similarity graph. Users enter a start and target artist, and the app builds a weighted graph where nodes are artists and edges represent Last.fm similarity scores. It then finds either the shortest path (fewest hops) or the strongest path (the chain whose weakest similarity link is as strong as possible), and displays the top three tracks for each artist along the way. The result is an interactive way to explore how seemingly different artists are musically connected through a chain of intermediaries.
+
+## Categories Covered
+
+This project implements concepts from two of the course categories: **Graph and Graph Algorithms** and **Social Networks**. The core of the project is a dynamically constructed weighted graph populated via BFS expansion through the Last.fm API, on which we run two different path-finding algorithms — standard BFS for shortest path and a modified max-min priority queue search for strongest path. The social networks aspect comes from modeling the Last.fm similarity graph as a network of artists connected by listener-driven similarity relationships, where path-finding reveals how artists relate to each other through shared audiences and musical influence.
+
+## Work Breakdown
+
+**Emily Yu — Data and Graph Layer**
+Registered the Last.fm API key and built the API client calls. Designed and implemented the graph data structures using a weighted adjacency list, and handled API errors and edge cases such as unknown artists.
+
+**Ashley Yan — Algorithms**
+Implemented the path-finding algorithms, including BFS for the shortest path and a modified priority-queue-based search that maximizes the minimum edge weight for the strongest path. Built the higher-level service layer that lazily expands the graph through BFS up to a configurable depth limit, and integrated track lookups into the path results.
+
+**Isabelle Gu — UI and Integration**
+Built the frontend interface with search inputs, a path mode toggle, a max hops slider, and a path visualization component that displays similarity scores and top tracks for each artist. Built a lightweight Java HTTP server and request handler to expose the backend as a REST API and serve the frontend, then integrated the work of all three team members into the full working application.
+
+## AI Usage
+
+AI assistance (Claude) was used for the following:
+
+- **Frontend development:** The full `src/resources/index.html` file, including HTML structure, CSS styling, and JavaScript for the path visualization, was generated with Claude's help. Claude was used iteratively to refine the design, color palette (Spotify-inspired dark and light modes), font choices, and interaction patterns based on feedback.
 
 ---
 
@@ -103,7 +124,7 @@ src/app/
 
 ---
 
-## Service API (for Person 2 / UI layer)
+## Service API
 
 ```java
 ArtistConnectionService svc = new ArtistConnectionService(apiKey);
@@ -122,7 +143,7 @@ Map<String, List<String>> tracks = svc.getTopTracksForPath(path);
 
 ---
 
-## Running the Web UI (Person 3)
+## Running the Web UI
 
 After compiling (see above), start the server with:
 
@@ -153,18 +174,6 @@ Copy the frontend to the output directory so it can be served:
 ```bash
 cp src/resources/index.html out/
 ```
-
-### New files added (Person 3)
-
-```
-src/app/server/
-    ApiServer.java     — HTTP server on port 8080, serves / and /api/path
-    PathHandler.java   — parses query params, calls ArtistConnectionService, returns JSON
-src/resources/
-    index.html         — full frontend: search inputs, degree slider, path visualization
-```
-
-> **AI disclosure:** `src/resources/index.html` was generated with the assistance of AI (Claude) to handle the styling, layout, and interactive frontend logic. 
 
 ### API endpoint
 
