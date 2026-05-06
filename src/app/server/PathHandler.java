@@ -13,32 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Handles GET /api/path requests.
- *
- * Query parameters:
- *   start  — start artist name (required)
- *   target — target artist name (required)
- *   depth  — max hops, 1–6 (optional, default 3)
- *   mode   — "strongest" or "shortest" (optional, default "strongest")
- *
- * Returns JSON:
- * {
- *   "found": true,
- *   "pathScore": 0.64,
- *   "artists": ["Taylor Swift", "Lorde", "Billie Eilish"],
- *   "edgeScores": [0.91, 0.64],
- *   "tracks": {
- *     "Taylor Swift": ["Shake It Off", "Blank Space", "Love Story"],
- *     ...
- *   }
- * }
- *
- * Error responses:
- *   400 — missing/invalid parameters
- *   404 — artist not found on Last.fm
- *   500 — network or unexpected error
- */
 public class PathHandler implements HttpHandler {
 
     private final ArtistConnectionService service;
@@ -117,10 +91,6 @@ public class PathHandler implements HttpHandler {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // JSON builders (hand-rolled to avoid adding another dependency)
-    // -------------------------------------------------------------------------
-
     private String buildFoundJson(PathResult result, Map<String, List<String>> tracks) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -170,9 +140,6 @@ public class PathHandler implements HttpHandler {
                 + escape(start) + "\\\" and \\\"" + escape(target) + "\\\"\"}";
     }
 
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     private Map<String, String> parseQuery(String query) {
         Map<String, String> map = new HashMap<>();
@@ -188,7 +155,7 @@ public class PathHandler implements HttpHandler {
         return map;
     }
 
-    /** Escapes characters that would break a JSON string literal. */
+
     private String escape(String s) {
         if (s == null) return "";
         return s.replace("\\", "\\\\")

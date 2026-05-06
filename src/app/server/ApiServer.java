@@ -10,19 +10,6 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 
-/**
- * Lightweight HTTP server for the Artist Network app.
- *
- * Endpoints:
- *   GET /          → serves index.html (the frontend)
- *   GET /api/path  → delegates to PathHandler, returns JSON
- *
- * Usage:
- *   ApiServer server = new ApiServer(8080, apiKey);
- *   server.start();
- *
- * Then open http://localhost:8080 in a browser.
- */
 public class ApiServer {
 
     private final int port;
@@ -66,11 +53,6 @@ public class ApiServer {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Serve index.html from src/resources/index.html (loaded from classpath)
-    // Falls back to an inline error page if the file is missing.
-    // -------------------------------------------------------------------------
-
     private void serveIndexHtml(HttpExchange exchange) throws IOException {
         try (InputStream is = getClass().getResourceAsStream("/index.html")) {
             if (is == null) {
@@ -87,9 +69,6 @@ public class ApiServer {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Helper
-    // -------------------------------------------------------------------------
 
     static void sendResponse(HttpExchange exchange, int status, String contentType, String body)
             throws IOException {
